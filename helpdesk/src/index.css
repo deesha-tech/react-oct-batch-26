@@ -76,3 +76,52 @@ body {
   color: var(--bs-primary-text-emphasis);
   font-weight: 500;
 }
+
+/* A star toggle that looks like an icon, not a link. */
+.star-btn {
+  padding: 0 0.25rem;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--bs-warning);
+  text-decoration: none;
+}
+
+/* ---------- Tickets ---------- */
+
+/* Resolved / closed tickets recede; the open work stands out. */
+.ticket-card.is-done {
+  opacity: 0.65;
+}
+
+/* <dl> as a two-column grid: every <dt> and <dd> must be a DIRECT child — hence Fragments in TicketMeta. */
+.ticket-meta {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.ticket-meta dt {
+  font-weight: 500;
+  color: var(--bs-secondary-color);
+}
+
+.ticket-meta dd {
+  margin: 0;
+}
+
+/* ---------- Lists & empty states ---------- */
+
+/* The zero case, designed on purpose: dashed box, message, a way out. */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  border: 1px dashed var(--bs-border-color);
+  border-radius: var(--hd-radius);
+  background: #fff;
+}
+
+.status-filter .badge {
+  font-weight: 500;
+}

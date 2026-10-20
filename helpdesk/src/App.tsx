@@ -1,16 +1,35 @@
+import { useState } from 'react'
 import { AppHeader } from './components/layout/AppHeader'
-import { PageHeader } from './components/layout/PageHeader'
 import { Sidebar } from './components/layout/Sidebar'
+import { agents } from './data/agents'
 import { tickets } from './data/tickets'
+import { byId, toggleInSet } from './lib/tickets'
+import { InboxPage } from './pages/InboxPage'
+
+// Built once at module scope: agents never change while the app runs.
+const agentsById = byId(agents)
 
 function App() {
+  // Starred ids live HERE, the nearest common parent of the two readers: the header
+  // (count) and the inbox (stars, "starred only").
+  //
+  // Why a Set, not an array? The question every card asks is "am I starred?":
+  // `set.has(id)` is O(1) and duplicates are impossible by construction. The cost:
+  // updates must copy (`toggleInSet` → `new Set(prev)`), and a Set is not JSON.
+  // Lazy initialiser `() => new Set()`: built once, not thrown away on every render.
+  const [starredIds, setStarredIds] = useState<ReadonlySet<number>>(() => new Set())
+
+  function toggleStar(id: number) {
+    // Updater form: computed FROM the previous Set, so two quick clicks never read a stale one.
+    setStarredIds((prev) => toggleInSet(prev, id))
+  }
+
   return (
     <div className="app-shell">
-      <AppHeader />
+      <AppHeader starredCount={starredIds.size} />
       <Sidebar />
       <main className="app-main">
-        <PageHeader title="Inbox" />
-        <p className="text-body-secondary">{tickets.length} tickets</p>
+        <InboxPage tickets={tickets} agentsById={agentsById} starredIds={starredIds} onToggleStar={toggleStar} />
       </main>
     </div>
   )

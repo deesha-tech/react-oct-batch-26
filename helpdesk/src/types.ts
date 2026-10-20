@@ -1,14 +1,41 @@
 // Domain types shared across the app.
+// Shaped like the JSON an API would serve, so code written against them
+// never changes when the network arrives.
 
-export type Priority = 'low' | 'medium' | 'high'
+/** `as const` keeps the literals; the type is DERIVED so list and type can never drift. */
+export const PRIORITIES = ['low', 'medium', 'high', 'urgent'] as const
+export type Priority = (typeof PRIORITIES)[number]
 
-export type Status = 'open' | 'in-progress' | 'resolved'
+export const STATUSES = ['open', 'in-progress', 'resolved', 'closed'] as const
+export type Status = (typeof STATUSES)[number]
 
 export interface Ticket {
-  id: number
+  readonly id: number
   title: string
+  description: string
   customer: string
   priority: Priority
   status: Status
-  assignee?: string
+  /** Unassigned tickets have no key at all — hence optional, not `null`. */
+  assigneeId?: string
+  tags?: string[]
+  /** ISO-8601 strings, exactly as JSON delivers them. Parse at the edge, not here. */
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Agent {
+  readonly id: string
+  name: string
+  email: string
+  team: string
+  avatarUrl?: string
+}
+
+export interface Comment {
+  readonly id: number
+  ticketId: number
+  author: string
+  body: string
+  createdAt: string
 }
