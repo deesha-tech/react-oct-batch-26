@@ -1,8 +1,8 @@
 import { Container, Navbar } from 'react-bootstrap'
 
-export function Header() {
+export function AppHeader() {
   return (
-    <Navbar bg="dark" data-bs-theme="dark">
+    <Navbar bg="dark" data-bs-theme="dark" className="app-header">
       <Container fluid>
         <Navbar.Brand href="#">Helpdesk</Navbar.Brand>
       </Container>

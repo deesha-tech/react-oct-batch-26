@@ -1,0 +1,78 @@
+/*
+ * Global styles. Bootstrap does the heavy lifting; this file only holds
+ * design tokens and the app-shell layout.
+ */
+:root {
+  --hd-header-height: 56px;
+  --hd-sidebar-width: 240px;
+  --hd-surface: #f6f7f9;
+  --hd-border: #e3e6ea;
+  --hd-radius: 0.5rem;
+}
+
+body {
+  background: var(--hd-surface);
+}
+
+/* ---------- App shell ---------- */
+
+.app-shell {
+  display: grid;
+  grid-template-rows: var(--hd-header-height) 1fr;
+  grid-template-columns: var(--hd-sidebar-width) 1fr;
+  grid-template-areas:
+    'header header'
+    'sidebar main';
+  min-height: 100vh;
+}
+
+.app-header {
+  grid-area: header;
+}
+
+.app-sidebar {
+  grid-area: sidebar;
+  background: #fff;
+  border-right: 1px solid var(--hd-border);
+}
+
+.app-main {
+  grid-area: main;
+  padding: 1.5rem 2rem;
+  min-width: 0; /* lets wide children (tables) scroll instead of stretching the grid */
+}
+
+@media (max-width: 767.98px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'header'
+      'main';
+  }
+
+  .app-sidebar {
+    display: none;
+  }
+
+  .app-main {
+    padding: 1rem;
+  }
+}
+
+/* ---------- Sidebar nav ---------- */
+
+.sidebar-nav .nav-link {
+  color: var(--bs-body-color);
+  border-radius: var(--hd-radius);
+  padding: 0.5rem 0.75rem;
+}
+
+.sidebar-nav .nav-link:hover {
+  background: var(--hd-surface);
+}
+
+.sidebar-nav .nav-link.active {
+  background: var(--bs-primary-bg-subtle);
+  color: var(--bs-primary-text-emphasis);
+  font-weight: 500;
+}

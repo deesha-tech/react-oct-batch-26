@@ -1,26 +1,18 @@
-import { Col, Container, Row } from 'react-bootstrap'
-import { Header } from './components/Header'
-import { SideNav } from './components/SideNav'
-import { MainPanel } from './components/MainPanel'
+import { AppHeader } from './components/layout/AppHeader'
+import { PageHeader } from './components/layout/PageHeader'
+import { Sidebar } from './components/layout/Sidebar'
 import { tickets } from './data/tickets'
 
 function App() {
   return (
-    <Container fluid className="p-0">
-      <Row className="g-0">
-        <Col>
-          <Header />
-        </Col>
-      </Row>
-      <Row className="g-0">
-        <Col md={3} className="bg-white border-end min-vh-100">
-          <SideNav />
-        </Col>
-        <Col md={9}>
-          <MainPanel title="Inbox" tickets={tickets} />
-        </Col>
-      </Row>
-    </Container>
+    <div className="app-shell">
+      <AppHeader />
+      <Sidebar />
+      <main className="app-main">
+        <PageHeader title="Inbox" />
+        <p className="text-body-secondary">{tickets.length} tickets</p>
+      </main>
+    </div>
   )
 }
 

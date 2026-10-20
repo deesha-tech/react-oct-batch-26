@@ -1,19 +1,4 @@
-
-//primitives, tuple, union types etc. 
-export type Priority = 'low' | 'medium' | 'high'            //union type
-
-export type Status = 'open' | 'in-progress' | 'resolved'
-
-//objects
-export interface Ticket {
-  id: number
-  title: string
-  customer: string
-  priority: Priority
-  status: Status
-  assignee?: string
-}
-
+import type { Ticket } from '../types'
 
 export const tickets: Ticket[] = [
   {

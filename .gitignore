@@ -7,4 +7,5 @@ dist-ssr
 !.vscode/extensions.json
 .idea
 *.log
-my-app/  # has its own git repository
+# my-app has its own git repository
+my-app/
