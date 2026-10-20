@@ -125,3 +125,10 @@ body {
 .status-filter .badge {
   font-weight: 500;
 }
+
+/* ---------- Search ---------- */
+
+.ticket-search {
+  flex: 1 1 18rem;
+  max-width: 28rem;
+}
