@@ -15,6 +15,7 @@ import {
 } from '../lib/tickets'
 import type { Filter, SortKey, SortOrder } from '../lib/tickets'
 import type { Agent, Priority, Status, Ticket } from '../types'
+import NewTicketDialog from '../components/tickets/NewTicketDialog'
 
 /** Cards per "page" of the show-more button. */
 const PAGE_SIZE = 9
@@ -47,6 +48,7 @@ export function InboxPage({ tickets, agentsById, starredIds, onToggleStar }: Inb
   const [sort, setSort] = useState<InboxSort>('newest')
   const [starredOnly, setStarredOnly] = useState(false)
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
+  const [showNewTicket, setShowNewTicket] = useState(false)
 
   // Everything else is DERIVED during render — no useState, so it can never disagree
   // with its source. 24 tickets filter + sort in microseconds; measure before you memo.
@@ -110,9 +112,14 @@ export function InboxPage({ tickets, agentsById, starredIds, onToggleStar }: Inb
             <Button variant="outline-secondary" size="sm">
               Export
             </Button>
-            <Button size="sm">New ticket</Button>
+            <Button onClick={ ()=> setShowNewTicket(true)} size="sm">New ticket</Button>
           </>
         }
+      />
+
+      <NewTicketDialog 
+          show={showNewTicket}
+          onCancel={ ()=> setShowNewTicket(false) }
       />
 
       <Stack direction="horizontal" gap={2} className="flex-wrap mb-3">
