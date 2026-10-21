@@ -1,0 +1,477 @@
+
+
+JavaScript 
+    - scripting language for web browsers 
+    - Web Frontends 
+    - Web Programming 
+    - scripting language for web browsers 
+    - Backend API, Web Servers 
+    - Serverless and edge functions 
+    - AI and Machine Learning 
+
+javasript + nodejs + experss.Js
+
+
+
+
+Language                            Libraries                               Framework 
+--------------                  -----------------                           ----------------------
+Python                              panda, numpy                            fastapi, django     
+
+JavaScript                      react, bootstrap, axios, redux,             Angular, Vue
+                                jquery, semanticUI,                         nextjs, tanstack, react router
+
+C / C++                             stdio.h
+
+Java                            java.lang, java.util, etc.                  Spring Framework
+
+Go
+
+C# 
+
+PHP                             -----                                       magento, laravel
+
+Kotlin 
+
+Swift 
+
+Dart
+
+
+================                ====================                ==============================
+Programming Capabilities        simplifies the tasks                    standardizes the process of dev the application
+
+
+JavaScript 
+-------------
+React 
+Next.Js 
+TanStack 
+React Router 
+
+
+
+runtime 
+-----------------
+    outside browser         - executes js code outside the browser 
+        - nodejs 
+    browser                 - execute js code inside the browser 
+        - js engine 
+
+
+Javascript Tools
+----------------
+    - VS Code   - Editor 
+    - NodeJS    - executes js code outside the browser 
+    - npm       - node package manager 
+                - dependency management tool 
+    - vite      - build tool (which includes a dev server, bundler, compiler, etc. )
+    - devTool   - debugging tools 
+    - ESLint    - linter tool 
+
+
+
+
+    - other tools 
+    --------------
+        - yarn 
+        - webpack 
+
+
+
+
+
+
+    JavaScript 
+        - 1995      - mocha 
+
+        - 1997  - it was submitted to ECMA for standardization 
+        - ECMA - to publish the "specifications" / "standards"  
+                - browsers implement those specifications, and implemetation is called "ECMAScript" 
+
+        - 1997  ES1 
+        - 1998  ES2 
+        - 1999  ES3 
+        - 2009  ES5 
+
+        - 2015  ES6     (introduced a big modernization)
+        - 
+        - 
+        -
+        - ES2020
+        - ES2022
+        - ES2026
+        - ES2027
+
+
+    Javascript Engine 
+    -------------------
+        - responsible to execute the js code inside the brwoser 
+        - V8 or SpiderMonkey or JavaScriptCore 
+
+
+    Engine	        Made by	            Runs inside
+    V8	            Google	            Chrome, Edge and other Chromium browsers, Node.js, Deno, Electron apps
+    SpiderMonkey	Mozilla	            Firefox     (a direct descendant of Eich's original 1995 engine)
+    JavaScriptCore	Apple	            Safari and WebKit, the Bun runtime
+    Hermes	        Meta	            React Native apps (built for fast app start-up on phones)
+
+
+    Javascript essentials 
+    ------------------------------
+
+        declare variables 
+            1. using var keyword 
+
+                var a = 10 
+
+            [introduced in ES6]
+
+            2. using 'let' keyword 
+                    - blocked scoped variable 
+                    - it cannot be redeclared 
+
+                let a = 20 
+
+            3. using 'const' keyword 
+
+                    - blocked scoped variable 
+                    - cannot reassign value 
+
+                const a = 20
+
+
+        how to create a function in javascript
+        ----------------------------------------- 
+
+                **in Javascript functions are "first class objects" 
+                        - a function expression can be stored in a variable 
+    
+                        const sayHello = function(){
+
+                        }
+
+                        sayHello();
+
+                        -  a function expression can be passed as a parameter to a function 
+
+                        function demo(someFun){
+                            someFun()
+                        }
+
+                        demo(()=> console.log('hello')})
+
+                        **javascript callback 
+                        --------------------
+                            - a callback in javascript is just a function passed as argument to another function, 
+                                    the receiving funciton can execute the given funciton (callback fuction)
+                            - callbacks are commonly used for array operations, event handling, timers, async tasks 
+
+
+                        **Arrow Functions 
+                        ----------------------
+                            const greet = function(name){
+                                return `Hi ${name}`
+                            }
+
+
+                            const greet = (name) => {
+                                return `Hi ${name}`
+                            }
+
+                            const greet = (name) => `Hi ${name}`
+                            
+
+
+                **Array Methods in javascript 
+                --------------------------------------------
+
+                    1. map(callback) function 
+                        - transform every element of the array 
+                        - returns a new array by applying the given callback to each element 
+                        - you want to transofrm data use map function
+
+                            array.map( (item, index) => {
+                                //use the item Here 
+                                //tranform the item 
+                                return transformedItem;
+                            } )
+
+
+                    2. filter(callback) function 
+                        - to select matching elements 
+                        - returns a new array containing the elements that pass the given condition 
+
+                        array.filter( (item) => condition )
+
+
+                    3. find(callback)
+
+                    4. findIndex(callback)
+
+                    5. reduce()
+
+                    6. forEach()
+
+                    7. slice()          - extract a part / portion of an array 
+
+                    8. splice()         - add, remove or replace elements from the array 
+
+                    9. sort() 
+
+                    10. push()
+
+                    11. pop() 
+
+                    12. reverse()
+
+
+
+
+
+
+
+
+
+
+            function arithAdd(a, b){
+                return a + b;
+            }
+
+
+            arithAdd(1, 3);
+
+
+        **javascript types are dynamic 
+
+
+        let a = 10;             //number 
+
+        a = 'Welcome'           //string 
+
+
+
+
+        The primitive types
+
+            * Javascript types are dynamic 
+
+
+    *TypeScript 
+    ----------------------
+        - superset of javascript 
+        - compiled language 
+        - type safe 
+
+
+         function arithAdd(a: number, b: number): number{
+                return a + b;
+         }
+
+
+
+         
+
+
+
+        index.html
+        -------------
+                <div id='root'><div>
+
+
+
+       ReactJS 
+       ------------
+        - javascript library for web develoment, websites, frontend applications 
+
+            - react library 
+                - creates components 
+               
+
+            - react-dom library 
+                - render the component inside the browser  
+
+                const root =  createRoot(document.getElementById('root'))
+
+                root.render(<Header />)
+
+
+        - Component 
+            - a component represents a specific part / piece / section in a web page 
+            - a component is just a javacript function that describes the UI using JSX
+
+
+
+                        function Header(){
+                            return (
+                                //jsx code 
+                                <div>
+                                    <h1>Lifestyle & Home</h1>
+                                    <p> some title </p>
+                                    <input type='text' />
+                                </div>
+                            )
+                        }
+
+        - JSX / TSX 
+            - javascript extension, a language used to describe ui in react component 
+            - jsx looks very very similar to html, not 100% similar 
+            - jsx code is converted to its equivalant js code 
+
+        - Babel 
+            - converts the jsx/tsx code into js 
+
+        how to create a react project 
+        --------------------------------------
+
+                - CRA - create react app cli tool 
+                - vite 
+                - using frameworks like Next.js, Remix, React Router v7 etc. 
+
+
+                vite + react19 + typescript + react compiler + Eslint 
+
+
+                react-project 
+                ----------------
+                    |-> node_modules 
+                    |       -> downloads all the dependencies 
+                    |-> src 
+                    |    - contains all the source code 
+                    |-> index.html      : root file, first file which get served 
+                    |-> package.json    : lists the dependencies, scripts etc. 
+                    |-> tsconfig.json   : config file for typescript 
+                    |-> vite.config.ts  : config file for vite
+
+
+
+
+    **Default Imports/Exports 
+
+
+    **Named Imports/Exports
+
+
+    ---  jsx code can be stored in a variable 
+
+            let message = <p> this is some paragraph </p>
+
+
+    --- jsx code can be returned a value from a function 
+
+
+
+
+    React Project 
+    ------------------  
+        build tool      : vite
+        
+        react libary    : react19
+        
+        language        : typescript 
+        
+        Tools           : react compiler, babel, bite dev server 
+
+        linter          : ESLint 
+
+        UI Library      : bootstrap, react-bootstrap
+
+        form handling   : react-hook-form, formik, redux-forms, etc. 
+
+        form valiation  : zod, yup, joi etc. 
+
+        http requests   : axios , fetch 
+
+        routing         : react router v8 
+
+        client stat management  : zustand, redux-toolkit 
+
+
+
+            const arr = [1, 2,3,4, 6]
+
+            const [x, b] = arr
+
+
+
+
+        State in Component 
+        ---------------------------
+
+            function App() {
+
+               const [value, setValue] = useState()                  //react hook function 
+
+            }
+
+
+            
+
+
+    ----------------------------------------------------------------------------------
+    TRIGGER                     RENDER                      COMMIT 
+
+
+
+
+
+
+    Event Handling 
+    ------------------------
+        - responding to the user actions i.e. clicking a button, tping into an element, submitting a form, hovering over an element etc. 
+        - an event is an action or occurence tht the browser detects 
+
+
+        Event                           React Event Hander  
+        --------------                  ----------------------
+        click                           onClick 
+
+        text input change               onChange
+
+        keyboard press                  onKeyDown
+
+        form submission                 onSubmit 
+
+        focus                           onFocus
+
+        blur                            onBlur 
+
+        checkbox changes                onChange
+
+        select changes                  onChange
+
+
+
+
+    Form Handling 
+    --------------
+        - create reusable components 
+        - HOC - higher order components 
+        - using external form libraries i.e. react-hook-form, formik, redux-form etc.
+        - syenthetic event object 
+        - validation libraries / schema based validation libraries i.e. zod, yup, joi etc. 
+        - debouncing 
+        - state management 
+
+
+    SyentheticBaseEvent
+    -------------------------------------
+        - react creates this SyentheticBaseEvent as a wrapper around the DOM Event object 
+            - to provide a consistent interface for handling diff events accross diff environments 
+
+
+    
+    Controlled Form Element 
+    ---------------------------
+        - form / input element whose value is owned by React State 
+        - value, onChange event on the form element that gets/updates the react state 
+
+        Why: 
+            - React State is the single source of truth 
+            - you can transform as you type i.e. uppercase, strip space, format the value i.e. phone number 
+            - easy to validate live
+            - easy to reset or prefill
+
+        cons: 
+            - every keystroke it re-renders the owning component 
+            - you must wire value + onChange on every field 
