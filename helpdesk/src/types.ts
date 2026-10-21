@@ -24,6 +24,12 @@ export interface Ticket {
   updatedAt: string
 }
 
+export type TicketDraft = Pick<Ticket, 'title' | 'description' | 'customer' | 'priority' | 'assigneeId' | 'tags'> // ← NEW
+
+export interface CreateOptions  {
+  star: boolean
+}
+
 export interface Agent {
   readonly id: string
   name: string

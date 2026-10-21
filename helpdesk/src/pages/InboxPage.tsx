@@ -14,7 +14,7 @@ import {
   sortTickets,
 } from '../lib/tickets'
 import type { Filter, SortKey, SortOrder } from '../lib/tickets'
-import type { Agent, Priority, Status, Ticket } from '../types'
+import type { Agent, CreateOptions, Priority, Status, Ticket, TicketDraft } from '../types'
 import NewTicketDialog from '../components/tickets/NewTicketDialog'
 
 /** Cards per "page" of the show-more button. */
@@ -36,9 +36,10 @@ interface InboxPageProps {
   /** Owned by App: the header's starred count reads the same state. */
   starredIds: ReadonlySet<number>
   onToggleStar: (id: number) => void
+  onCreateTicket: (draft:TicketDraft, options:CreateOptions) => Ticket
 }
 
-export function InboxPage({ tickets, agentsById, starredIds, onToggleStar }: InboxPageProps) {
+export function InboxPage({ tickets, agentsById, starredIds, onToggleStar, onCreateTicket }: InboxPageProps) {
   // Only what the user CHOSE is state. `useState<…>` pins each one to its union.
   // `query` is LIFTED to here — the nearest common parent of the search box (writes it),
   // the list, the status counts and the header description (all read it). One source of truth.
@@ -49,6 +50,7 @@ export function InboxPage({ tickets, agentsById, starredIds, onToggleStar }: Inb
   const [starredOnly, setStarredOnly] = useState(false)
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [showNewTicket, setShowNewTicket] = useState(false)
+  const [created, setCreated] = useState<Ticket | null>(null);
 
   // Everything else is DERIVED during render — no useState, so it can never disagree
   // with its source. 24 tickets filter + sort in microseconds; measure before you memo.
@@ -89,6 +91,12 @@ export function InboxPage({ tickets, agentsById, starredIds, onToggleStar }: Inb
     setVisibleCount(PAGE_SIZE)
   }
 
+  function handleCreate(draft: TicketDraft, options:CreateOptions){
+    const newTicket = onCreateTicket(draft, options)
+    setCreated(newTicket)
+    setShowNewTicket(false)
+  }
+
   // Two different empties need two different messages.
   const empty =
     starredOnly && starredIds.size === 0
@@ -120,6 +128,7 @@ export function InboxPage({ tickets, agentsById, starredIds, onToggleStar }: Inb
       <NewTicketDialog 
           show={showNewTicket}
           onCancel={ ()=> setShowNewTicket(false) }
+          onCreate={handleCreate}
       />
 
       <Stack direction="horizontal" gap={2} className="flex-wrap mb-3">
