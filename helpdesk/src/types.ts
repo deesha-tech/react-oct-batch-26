@@ -1,5 +1,5 @@
 // Domain types shared across the app.
-// Shaped like the JSON an API would serve, so code written against them
+// Shaped like the JSON the API will serve, so code written against them
 // never changes when the network arrives.
 
 /** `as const` keeps the literals; the type is DERIVED so list and type can never drift. */
@@ -24,12 +24,6 @@ export interface Ticket {
   updatedAt: string
 }
 
-export type TicketDraft = Pick<Ticket, 'title' | 'description' | 'customer' | 'priority' | 'assigneeId' | 'tags'> // ← NEW
-
-export interface CreateOptions  {
-  star: boolean
-}
-
 export interface Agent {
   readonly id: string
   name: string
@@ -45,3 +39,10 @@ export interface Comment {
   body: string
   createdAt: string
 }
+
+/**
+ * What a person types to open a ticket. The app adds the rest —
+ * id, status, timestamps — so the form cannot get them wrong. Derived with
+ * `Pick`, so a renamed Ticket field breaks the form at compile time.
+ */
+export type TicketDraft = Pick<Ticket, 'title' | 'description' | 'customer' | 'priority' | 'assigneeId' | 'tags'>

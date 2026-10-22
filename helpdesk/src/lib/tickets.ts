@@ -4,7 +4,7 @@
  * state model is built on and why these are trivial to test.
  */
 import { PRIORITIES, STATUSES } from '../types'
-import type { Agent, Priority, Status, Ticket } from '../types'
+import type { Agent, Priority, Status, Ticket, TicketDraft } from '../types'
 import { ageInHours, formatTicketId } from './format'
 
 // ------------------------------------------------------------ unions & narrowing
@@ -121,7 +121,7 @@ export function toggleId(ids: readonly number[], id: number): number[] {
 }
 
 /**
- * The same toggle for a Set (the app keeps starred ids in one). Copy, then
+ * The same toggle for a Set. Copy, then
  * change the COPY — `set.add()` on the Set in state mutates it in place, React
  * sees the same reference and skips the re-render.
  */
@@ -130,6 +130,19 @@ export function toggleInSet<T>(set: ReadonlySet<T>, value: T): Set<T> {
   if (next.has(value)) next.delete(value)
   else next.add(value)
   return next
+}
+
+/** Ids are numbers the client hands out until the server does: one more than the largest. */
+export function nextTicketId(tickets: readonly Ticket[]): number {
+  return tickets.reduce((max, t) => Math.max(max, t.id), 0) + 1
+}
+
+/**
+ * The form's output → a whole Ticket. `now` is a parameter (not `new Date()` in
+ * here) so the function stays pure; the event handler that calls it reads the clock.
+ */
+export function draftToTicket(draft: TicketDraft, id: number, nowIso: string): Ticket {
+  return { ...draft, id, status: 'open', createdAt: nowIso, updatedAt: nowIso }
 }
 
 // ------------------------------------------------------------- the array toolbox

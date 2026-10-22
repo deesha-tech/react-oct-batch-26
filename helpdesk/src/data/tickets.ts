@@ -1,4 +1,4 @@
-import type { Ticket, TicketDraft } from '../types'
+import type { Ticket } from '../types'
 
 // Bundled sample data — enough tickets for the list, filters and "show more".
 // Later this comes from an API.
@@ -284,13 +284,5 @@ export const tickets: Ticket[] = [
     tags: ['ui'],
     createdAt: '2026-10-19T23:00:00Z',
     updatedAt: '2026-10-19T23:00:00Z',
-  }
+  },
 ]
-
-export function nextTicketId(tickets: readonly Ticket[]): number { // ← NEW
-  return tickets.reduce((max, t) => Math.max(max, t.id), 0) + 1 // ← NEW
-} 
-
-export function draftToTicket(draft: TicketDraft, id: number, nowIso: string): Ticket { // ← NEW
-  return { ...draft, id, status: 'open', createdAt: nowIso, updatedAt: nowIso } // ← NEW
-}

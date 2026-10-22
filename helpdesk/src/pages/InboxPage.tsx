@@ -1,11 +1,15 @@
 import { useState } from 'react'
-import { Button, ButtonGroup, Stack } from 'react-bootstrap'
+import { Alert, Button, ButtonGroup, Stack } from 'react-bootstrap'
 import { PageHeader } from '../components/layout/PageHeader'
+import { NewTicketDialog } from '../components/tickets/NewTicketDialog'
+import type { CreateOptions } from '../components/tickets/NewTicketDialog'
 import { PrioritySelect } from '../components/tickets/PrioritySelect'
 import { StatusFilter } from '../components/tickets/StatusFilter'
 import { TicketList } from '../components/tickets/TicketList'
 import { TicketSearch } from '../components/tickets/TicketSearch'
+import { formatTicketId } from '../lib/format'
 import {
+  allTags,
   countByStatus,
   filterByPriority,
   filterByStatus,
@@ -14,8 +18,7 @@ import {
   sortTickets,
 } from '../lib/tickets'
 import type { Filter, SortKey, SortOrder } from '../lib/tickets'
-import type { Agent, CreateOptions, Priority, Status, Ticket, TicketDraft } from '../types'
-import NewTicketDialog from '../components/tickets/NewTicketDialog'
+import type { Agent, Priority, Status, Ticket, TicketDraft } from '../types'
 
 /** Cards per "page" of the show-more button. */
 const PAGE_SIZE = 9
@@ -31,15 +34,25 @@ const SORTS: Record<InboxSort, { label: string; key: SortKey; order: SortOrder }
 const SORT_IDS = Object.keys(SORTS) as InboxSort[]
 
 interface InboxPageProps {
+  /** Owned by App: the new-ticket form adds to it, and it outlives this page. */
   tickets: readonly Ticket[]
+  agents: readonly Agent[]
   agentsById: ReadonlyMap<string, Agent>
   /** Owned by App: the header's starred count reads the same state. */
   starredIds: ReadonlySet<number>
   onToggleStar: (id: number) => void
-  onCreateTicket: (draft:TicketDraft, options:CreateOptions) => Ticket
+  /** `onX` for the prop, `handleX`/a verb for the implementation (App's `createTicket`). */
+  onCreateTicket: (draft: TicketDraft, options: CreateOptions) => Ticket
 }
 
-export function InboxPage({ tickets, agentsById, starredIds, onToggleStar, onCreateTicket }: InboxPageProps) {
+export function InboxPage({
+  tickets,
+  agents,
+  agentsById,
+  starredIds,
+  onToggleStar,
+  onCreateTicket,
+}: InboxPageProps) {
   // Only what the user CHOSE is state. `useState<…>` pins each one to its union.
   // `query` is LIFTED to here — the nearest common parent of the search box (writes it),
   // the list, the status counts and the header description (all read it). One source of truth.
@@ -50,7 +63,8 @@ export function InboxPage({ tickets, agentsById, starredIds, onToggleStar, onCre
   const [starredOnly, setStarredOnly] = useState(false)
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [showNewTicket, setShowNewTicket] = useState(false)
-  const [created, setCreated] = useState<Ticket | null>(null);
+  /** The last ticket the form created — drives the success alert. */
+  const [created, setCreated] = useState<Ticket | null>(null)
 
   // Everything else is DERIVED during render — no useState, so it can never disagree
   // with its source. 24 tickets filter + sort in microseconds; measure before you memo.
@@ -66,6 +80,8 @@ export function InboxPage({ tickets, agentsById, starredIds, onToggleStar, onCre
   const shown = matching.slice(0, visibleCount)
   const remaining = matching.length - shown.length
   const attentionCount = tickets.filter((t) => needsAttention(t)).length
+  const tagOptions = allTags(tickets)
+  const createdIsHidden = created !== null && !matching.some((t) => t.id === created.id)
 
   // A new filter is a new list: start again from the first page. Two setters, ONE re-render (batching).
   function changeStatus(next: Filter<Status>) {
@@ -91,9 +107,8 @@ export function InboxPage({ tickets, agentsById, starredIds, onToggleStar, onCre
     setVisibleCount(PAGE_SIZE)
   }
 
-  function handleCreate(draft: TicketDraft, options:CreateOptions){
-    const newTicket = onCreateTicket(draft, options)
-    setCreated(newTicket)
+  function handleCreate(draft: TicketDraft, options: CreateOptions) {
+    setCreated(onCreateTicket(draft, options))
     setShowNewTicket(false)
   }
 
@@ -120,16 +135,29 @@ export function InboxPage({ tickets, agentsById, starredIds, onToggleStar, onCre
             <Button variant="outline-secondary" size="sm">
               Export
             </Button>
-            <Button onClick={ ()=> setShowNewTicket(true)} size="sm">New ticket</Button>
+            {/* PASS a function. `onClick={setShowNewTicket(true)}` would CALL it during render. */}
+            <Button size="sm" onClick={() => setShowNewTicket(true)}>
+              New ticket
+            </Button>
           </>
         }
       />
 
-      <NewTicketDialog 
-          show={showNewTicket}
-          onCancel={ ()=> setShowNewTicket(false) }
-          onCreate={handleCreate}
-      />
+      {created && (
+        <Alert variant="success" dismissible onClose={() => setCreated(null)}>
+          {formatTicketId(created.id)} “{created.title}” created.
+          {createdIsHidden && (
+            <>
+              {' '}
+              The current filters hide it —{' '}
+              <Button variant="link" className="alert-link p-0 align-baseline" onClick={clearFilters}>
+                clear filters
+              </Button>
+              .
+            </>
+          )}
+        </Alert>
+      )}
 
       <Stack direction="horizontal" gap={2} className="flex-wrap mb-3">
         <TicketSearch value={query} onChange={changeQuery} />
@@ -169,6 +197,14 @@ export function InboxPage({ tickets, agentsById, starredIds, onToggleStar, onCre
         starredIds={starredIds}
         onToggleStar={onToggleStar}
         empty={empty}
+      />
+
+      <NewTicketDialog
+        show={showNewTicket}
+        agents={agents}
+        tagOptions={tagOptions}
+        onCreate={handleCreate}
+        onCancel={() => setShowNewTicket(false)}
       />
 
       {/* Render-or-nothing with a REAL boolean on the left: `remaining &&` would print 0. */}

@@ -466,6 +466,10 @@ Javascript Tools
         - form / input element whose value is owned by React State 
         - value, onChange event on the form element that gets/updates the react state 
 
+        When:
+            - small forms (1-5 fields)
+            - wherever the UI must react to every keystroke 
+
         Why: 
             - React State is the single source of truth 
             - you can transform as you type i.e. uppercase, strip space, format the value i.e. phone number 
@@ -475,3 +479,34 @@ Javascript Tools
         cons: 
             - every keystroke it re-renders the owning component 
             - you must wire value + onChange on every field 
+
+    UnControlled Form Element 
+    -----------------------------
+            - form / input element values are owned by DOM
+            - no state values, 
+            - the form / element values are read later via "ref" or "FormData" on submit or on some event 
+
+            when:
+                - whenever you have file uploads 
+                - server rendered pages (SSR)
+                - sensitive forms 
+                - examples: newletter signups, login forms for the marketing,
+
+            Why: 
+                - zero re-render while typing 
+                - less code, no state, no handlers, 
+                - use native html validations 
+                - **file inputs are always UnControlled
+
+      React 19 actions
+      -------------------
+            - nextjs react app, react router v8 app, 
+            - heavy mutations
+
+            when:
+                - heavy mutations on submission
+                - server owns the validation, persist the data on server, progressive enhancements 
+
+
+    using react-hook-form / formik 
+    -------------------------------------

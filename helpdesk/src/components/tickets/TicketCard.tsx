@@ -16,7 +16,7 @@ interface TicketCardProps {
 }
 
 /**
- * The student's original card (commit 77337cb), cleaned up: badges and meta are
+ * The participants' original card, cleaned up: badges and meta are
  * their own components, and "needs attention" is derived by a pure helper
  * instead of being re-implemented inline.
  */
