@@ -205,6 +205,8 @@ export function InboxPage({
         tagOptions={tagOptions}
         onCreate={handleCreate}
         onCancel={() => setShowNewTicket(false)}
+        
+
       />
 
       {/* Render-or-nothing with a REAL boolean on the left: `remaining &&` would print 0. */}

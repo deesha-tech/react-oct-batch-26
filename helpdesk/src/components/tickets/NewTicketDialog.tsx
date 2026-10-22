@@ -209,13 +209,16 @@ interface NewTicketDialogProps extends NewTicketFormProps {
  * The form lives INSIDE the Modal, so it unmounts when the dialog closes — and its
  * state goes with it. Reopening starts from EMPTY without a single reset line.
  */
+
 export function NewTicketDialog({ show, onCancel, ...formProps }: NewTicketDialogProps) {
   return (
     <Modal show={show} onHide={onCancel} centered>
       <Modal.Header closeButton>
         <Modal.Title className="h6">New ticket</Modal.Title>
       </Modal.Header>
-      <NewTicketForm {...formProps} onCancel={onCancel} />
+      <NewTicketForm 
+        {...formProps}
+         onCancel={onCancel} />
     </Modal>
   )
 }
