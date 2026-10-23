@@ -1,36 +1,11 @@
-import { useState } from 'react'
-import type { SubmitEvent } from 'react'
-import { Button, Col, Form, Modal, Row } from 'react-bootstrap'
-import { PRIORITIES } from '../../types'
-import type { Agent, Priority, TicketDraft } from '../../types'
-
-/**
- * The form's OWN shape. Inputs deal in strings, so "unassigned" is '' here and
- * an absent key in the TicketDraft that leaves the form. `star` is a UI choice,
- * not ticket data, so it is not in the draft at all.
- */
-interface NewTicketValues {
-  title: string
-  customer: string
-  description: string
-  priority: Priority
-  assigneeId: string
-  tags: string[]
-  star: boolean
-}
-
-const EMPTY: NewTicketValues = {
-  title: '',
-  customer: '',
-  description: '',
-  priority: 'medium',
-  assigneeId: '',
-  tags: [],
-  star: false,
-}
-
-const TITLE_MAX = 80
-const TITLE_MIN = 5
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Controller, useForm, useWatch } from 'react-hook-form'
+import type { Control } from 'react-hook-form'
+import { Alert, Button, Col, Modal, Row } from 'react-bootstrap'
+import { CheckboxField, PriorityPicker, SelectField, TagPicker, TextAreaField, TextField } from '../fields'
+import { NEW_TICKET_EMPTY, TITLE_MAX, TITLE_MIN, newTicketSchema, toTicketDraft } from '../../lib/schemas'
+import type { NewTicketInput, NewTicketValues } from '../../lib/schemas'
+import type { Agent, TicketDraft } from '../../types'
 
 export interface CreateOptions {
   /** "★ Star it for me" — the parent owns the starred ids, so it does the starring. */
@@ -45,159 +20,122 @@ interface NewTicketFormProps {
 }
 
 /**
- * CONTROLLED, one state object, every input type: text, textarea, radio group,
- * select, multi-select, checkbox. Each keystroke re-renders the form — which is
- * what lets the title counter and the submit button react while you type.
+ * react-hook-form + zod, on the field library. Compare with a version
+ * (one useState object, hand-written `isValid`): no state per field, no `set()`,
+ * no touched bookkeeping, no guard clause — RHF owns the lifecycle, the schema owns
+ * the rules, the fields own the markup. This component is orchestration only.
  */
 function NewTicketForm({ agents, tagOptions, onCreate, onCancel }: NewTicketFormProps) {
-  const [values, setValues] = useState<NewTicketValues>(EMPTY)
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors, submitCount, isSubmitting },
+  } = useForm<NewTicketInput, unknown, NewTicketValues>({
+    resolver: zodResolver(newTicketSchema), // the rules live in lib/schemas.ts, not in this JSX
+    mode: 'onTouched', // first error on BLUR ("punish late")…
+    reValidateMode: 'onChange', // …then re-checked on every keystroke until fixed ("reward early")
+    defaultValues: NEW_TICKET_EMPTY,
+    // shouldFocusError is on by default: a failed submit focuses the first invalid field
+  })
 
-  // Generic setter: `set('priority', 'urgnet')` and `set('star', 'yes')` are compile errors.
-  function set<K extends keyof NewTicketValues>(field: K, value: NewTicketValues[K]) {
-    setValues((prev) => ({ ...prev, [field]: value })) // updater + spread: copy, override one key
+  /** Only ever called with data that passed the schema — the guard clause is built in. */
+  function onValid(values: NewTicketValues) {
+    onCreate(toTicketDraft(values), { star: values.star })
   }
 
-  // DERIVED, not stored: there is no `isValid` state to forget to update.
-  const titleLength = values.title.trim().length
-  const isValid = titleLength >= TITLE_MIN && values.customer.trim() !== ''
-
-  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
-    event.preventDefault() // first line, always: a native submit reloads the page and wipes all state
-    if (!isValid) return
-
-    // Convert at the boundary — trimmed strings out, '' → no key at all.
-    const draft: TicketDraft = {
-      title: values.title.trim(),
-      customer: values.customer.trim(),
-      description: values.description.trim(),
-      priority: values.priority,
-      tags: values.tags,
-      ...(values.assigneeId !== '' && { assigneeId: values.assigneeId }),
-    }
-    onCreate(draft, { star: values.star })
-  }
+  const errorCount = Object.keys(errors).length
+  const agentOptions = agents.map((a) => ({ value: a.id, label: `${a.name} · ${a.team}` }))
 
   return (
-    // noValidate: we decide what "valid" means, not the browser's bubbles.
-    <Form noValidate onSubmit={handleSubmit}>
+    <form noValidate onSubmit={handleSubmit(onValid)}>
       <Modal.Body>
-        <Row className="g-3">
+        {/* A live region: screen readers announce it when a submit fails, sighted users see a summary. */}
+        <div aria-live="assertive">
+          {submitCount > 0 && errorCount > 0 && (
+            <Alert variant="danger" className="py-2 small">
+              {errorCount === 1 ? '1 field needs' : `${errorCount} fields need`} attention.
+            </Alert>
+          )}
+        </div>
+
+        <Row className="gx-3">
           <Col xs={12}>
-            {/* controlId wires <label htmlFor> to the input: clicking the label focuses the field. */}
-            <Form.Group controlId="new-ticket-title">
-              <Form.Label className="small fw-semibold">Title</Form.Label>
-              <Form.Control
-                autoFocus
-                maxLength={TITLE_MAX}
-                value={values.title}
-                onChange={(e) => set('title', e.target.value)}
-              />
-              {/* A value that drives other UI immediately — the reason to choose controlled. */}
-              <Form.Text className={titleLength > 0 && titleLength < TITLE_MIN ? 'text-danger' : undefined}>
-                {values.title.length}/{TITLE_MAX} · at least {TITLE_MIN} characters
-              </Form.Text>
-            </Form.Group>
-          </Col>
-
-          <Col sm={6}>
-            <Form.Group controlId="new-ticket-customer">
-              <Form.Label className="small fw-semibold">Customer</Form.Label>
-              <Form.Control value={values.customer} onChange={(e) => set('customer', e.target.value)} />
-            </Form.Group>
-          </Col>
-
-          <Col sm={6}>
-            <Form.Group controlId="new-ticket-assignee">
-              <Form.Label className="small fw-semibold">Assignee</Form.Label>
-              <Form.Select value={values.assigneeId} onChange={(e) => set('assigneeId', e.target.value)}>
-                <option value="">Unassigned</option>
-                {agents.map((agent) => (
-                  <option key={agent.id} value={agent.id}>
-                    {agent.name} · {agent.team}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-          </Col>
-
-          <Col xs={12}>
-            {/* A radio group is ONE state value and many inputs; the shared `name` makes arrow keys work. */}
-            <fieldset>
-              <legend className="small fw-semibold mb-1 fs-6">Priority</legend>
-              {PRIORITIES.map((p) => (
-                <Form.Check
-                  key={p}
-                  inline
-                  type="radio"
-                  id={`new-ticket-priority-${p}`}
-                  name="priority"
-                  label={p}
-                  className="text-capitalize"
-                  value={p}
-                  checked={values.priority === p}
-                  // The closure already holds `p` as a Priority — no string to parse.
-                  onChange={() => set('priority', p)}
-                />
-              ))}
-            </fieldset>
-          </Col>
-
-          <Col xs={12}>
-            <Form.Group controlId="new-ticket-description">
-              <Form.Label className="small fw-semibold">Description</Form.Label>
-              {/* <textarea> takes `value`, not children — same contract as every other input. */}
-              <Form.Control
-                as="textarea"
-                rows={3}
-                value={values.description}
-                onChange={(e) => set('description', e.target.value)}
-              />
-            </Form.Group>
-          </Col>
-
-          <Col sm={6}>
-            <Form.Group controlId="new-ticket-tags">
-              <Form.Label className="small fw-semibold">Tags</Form.Label>
-              <Form.Select
-                multiple
-                htmlSize={4}
-                value={values.tags} // an ARRAY for a multi-select
-                onChange={(e) => set('tags', [...e.target.selectedOptions].map((o) => o.value))}
-              >
-                {tagOptions.map((tag) => (
-                  <option key={tag} value={tag}>
-                    {tag}
-                  </option>
-                ))}
-              </Form.Select>
-              <Form.Text>Ctrl/⌘-click to pick several.</Form.Text>
-            </Form.Group>
-          </Col>
-
-          <Col sm={6} className="d-flex align-items-end">
-            {/* Checkbox: `checked` + `e.target.checked`, never `value`. */}
-            <Form.Check
-              type="checkbox"
-              id="new-ticket-star"
-              label="★ Star it for me"
-              checked={values.star}
-              onChange={(e) => set('star', e.target.checked)}
+            {/* register → name, onChange, onBlur, ref: TextField forwards all four, so no Controller needed */}
+            <TextField
+              label="Title"
+              autoFocus
+              maxLength={TITLE_MAX}
+              error={errors.title?.message}
+              hint={<TitleCounter control={control} />}
+              {...register('title')}
             />
+          </Col>
+          <Col>
+            <TextField label="Customer" error={errors.customer?.message} {...register('customer')} />
+          </Col>
+          <Col>
+            <SelectField
+              label="Assignee"
+              placeholder="Unassigned"
+              options={agentOptions}
+              error={errors.assigneeId?.message}
+              {...register('assigneeId')}
+            />
+          </Col>
+          <Col xs={12}>
+            {/* A non-native picker reports VALUES, not events — Controller adapts it to the form. */}
+            <Controller
+              name="priority"
+              control={control}
+              render={({ field, fieldState }) => (
+                <PriorityPicker label="Priority" error={fieldState.error?.message} {...field} />
+              )}
+            />
+          </Col>
+          <Col xs={12}>
+            <TextAreaField label="Description" error={errors.description?.message} {...register('description')} />
+          </Col>
+          <Col xs={12}>
+            <Controller
+              name="tags"
+              control={control}
+              render={({ field, fieldState }) => (
+                <TagPicker label="Tags" options={tagOptions} error={fieldState.error?.message} {...field} />
+              )}
+            />
+          </Col>
+          <Col xs={12}>
+            <CheckboxField label="★ Star it for me" className="mb-0" {...register('star')} />
           </Col>
         </Row>
       </Modal.Body>
 
       <Modal.Footer>
-        {!isValid && <span className="small text-body-secondary me-auto">Title and customer are required.</span>}
         {/* type="button": inside a <form>, a plain <button> SUBMITS. */}
         <Button type="button" variant="outline-secondary" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit" disabled={!isValid}>
+        {/* Never disabled while invalid: a disabled button can't explain WHY. Submit, then show the errors. */}
+        <Button type="submit" disabled={isSubmitting}>
           Create ticket
         </Button>
       </Modal.Footer>
-    </Form>
+    </form>
+  )
+}
+
+/**
+ * `useWatch` in a CHILD: typing in the title re-renders this counter, not the whole form.
+ * (`watch('title')` up in NewTicketForm would re-render every field on every keystroke.)
+ */
+function TitleCounter({ control }: { control: Control<NewTicketInput, unknown, NewTicketValues> }) {
+  const title = useWatch({ control, name: 'title' })
+  const short = title.trim().length > 0 && title.trim().length < TITLE_MIN
+  return (
+    <span className={short ? 'text-danger' : undefined}>
+      {title.length}/{TITLE_MAX} · at least {TITLE_MIN} characters
+    </span>
   )
 }
 
@@ -207,18 +145,15 @@ interface NewTicketDialogProps extends NewTicketFormProps {
 
 /**
  * The form lives INSIDE the Modal, so it unmounts when the dialog closes — and its
- * state goes with it. Reopening starts from EMPTY without a single reset line.
+ * state goes with it. Reopening starts from NEW_TICKET_EMPTY without a single reset line.
  */
-
 export function NewTicketDialog({ show, onCancel, ...formProps }: NewTicketDialogProps) {
   return (
     <Modal show={show} onHide={onCancel} centered>
       <Modal.Header closeButton>
         <Modal.Title className="h6">New ticket</Modal.Title>
       </Modal.Header>
-      <NewTicketForm 
-        {...formProps}
-         onCancel={onCancel} />
+      <NewTicketForm {...formProps} onCancel={onCancel} />
     </Modal>
   )
 }

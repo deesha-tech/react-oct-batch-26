@@ -19,6 +19,7 @@ import {
 } from '../lib/tickets'
 import type { Filter, SortKey, SortOrder } from '../lib/tickets'
 import type { Agent, Priority, Status, Ticket, TicketDraft } from '../types'
+import Counter from '../components/Counter'
 
 /** Cards per "page" of the show-more button. */
 const PAGE_SIZE = 9
@@ -127,6 +128,8 @@ export function InboxPage({
 
   return (
     <>
+    
+
       <PageHeader
         title="Inbox"
         description={`${matching.length} of ${tickets.length} tickets · ${attentionCount} need attention`}

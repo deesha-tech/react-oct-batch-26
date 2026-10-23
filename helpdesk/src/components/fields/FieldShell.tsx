@@ -1,6 +1,5 @@
 import { useId } from 'react'
 import type { ReactNode } from 'react'
-import { FieldShell, TextField } from '.'
 
 /** What FieldShell hands its control: everything the label/hint/error wiring needs. */
 export interface ControlA11yProps {

@@ -1,4 +1,4 @@
-import type { ComponentProps } from 'react'
+import { Children, type ComponentProps } from 'react'
 import { FieldShell } from './FieldShell'
 import type { BaseFieldProps } from './FieldShell'
 
@@ -19,7 +19,7 @@ export interface TextFieldProps extends BaseFieldProps, Omit<ComponentProps<'inp
 
 export function TextField({ id, label, error, hint, className, ...inputProps }: TextFieldProps) {
   return (
-    <FieldShell id={id} label={label} error={error} hint={hint}>
+    <FieldShell label={label} error={error} hint={hint}>
       {(a11y) => (
         <input
           {...inputProps}
@@ -30,3 +30,4 @@ export function TextField({ id, label, error, hint, className, ...inputProps }: 
     </FieldShell>
   )
 }
+

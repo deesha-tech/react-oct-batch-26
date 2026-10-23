@@ -14,7 +14,10 @@ export function LoginPage() {
 
   return (
     <>
-      <PageHeader title="Sign in" description="The student's original LoginForm, cleaned up." />
+      <PageHeader
+        title="Sign in"
+        description="Validated with the field library and a zod schema."
+      />
       <Row>
         <Col md={8} lg={5}>
           <Card body>
