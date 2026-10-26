@@ -1,9 +1,13 @@
-// TRAP: the React 18 way. Every piece of the submit lifecycle is state you write and keep in sync yourself.
+// THE FORM YOU'LL FIX. It's written the React 18 way, and it has two bugs:
+//   1. Double click "Post review": two POST requests go out and the review appears twice.
+//   2. Post a review shorter than 10 characters, then a good one: the old error never goes away.
+// Your task (see README.md): rewrite this form with React 19 Actions so both bugs disappear,
+// without adding any useState for loading or error.
 import { useState, type FormEvent } from 'react';
 import { postReview, type Review } from './api';
 import { timeline } from './shell/timeline';
 
-export function TrapForm({ onAdded }: { onAdded: (r: Review) => void }) {
+export function ReviewForm({ onAdded }: { onAdded: (r: Review) => void }) {
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(5);
   const [loading, setLoading] = useState(false);
@@ -17,7 +21,6 @@ export function TrapForm({ onAdded }: { onAdded: (r: Review) => void }) {
       const saved = await postReview(comment, rating);
       onAdded(saved);
       setComment('');
-      // forgot: setError(null), so an old error stays on screen after a successful retry
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -30,7 +33,6 @@ export function TrapForm({ onAdded }: { onAdded: (r: Review) => void }) {
       <Stars value={rating} onChange={setRating} />
       <textarea className="rf-text" value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Write a review…" aria-label="Review" />
       <div className="rf-foot">
-        {/* the button is never disabled: click twice while it's saving and it posts twice */}
         <button className="btn btn-primary rf-submit" type="submit">{loading ? 'Posting…' : 'Post review'}</button>
         {error && <p className="rf-error">{error}</p>}
       </div>

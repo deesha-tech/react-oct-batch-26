@@ -1,25 +1,35 @@
-# Challenge · React 19 Actions
+# Challenge · Fix the review form with React 19 Actions
 
 **React Application Development · October 2026 batch**
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/deesha-tech/react-oct-batch-26/tree/main/challenges/29-react19-actions?file=src/ActionForm.tsx)
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/deesha-tech/react-oct-batch-26/tree/main/challenges/29-react19-actions?file=src/ReviewForm.tsx)
 
-The **Trap** tab is a product review form written the React 18 way: four `useState`s (comment, rating, loading, error) and a `try/catch/finally`. It has two bugs you can see:
+`src/ReviewForm.tsx` is a product review form written the React 18 way: `useState` for the comment, the rating, loading and the error, and a `handleSubmit` with `try/catch/finally`. It has **two bugs**.
 
-- Double click **Post review**: two POST requests go out (look at the timeline) and your review appears twice.
-- Post a review shorter than 10 characters, then a good one: it saves, but the old error stays on screen.
+## Step 1 · Find the bugs
 
-Your job is to rewrite it with **React 19 Actions** in the **Pattern** tab, then add **useOptimistic** in the **Bonus** tab. The requests go to [DummyJSON](https://dummyjson.com) with a short delay, like a real server.
+- Click **Post review** twice, quickly. Watch the **Network and render timeline** and the review list. What happens?
+- Post a review shorter than 10 characters, then a good one. What's wrong with the error message?
 
-## Tasks
+Write down both bugs and the lines that cause them.
 
-| # | File | Task | Done when |
-|---|---|---|---|
-| 1 | `src/ActionForm.tsx` | Rewrite the form with `<form action>` and `useActionState`. No `useState` for loading or error: the action **returns** the next state. | The error shows under the button and clears on the next try. The form is empty after a success, and keeps the text after an error. |
-| 2 | `src/ActionForm.tsx` → `SubmitButton` | Make the button disable itself and say "Posting…" with `useFormStatus`, without props. | A double click sends **one** request in the timeline. |
-| 3 (bonus) | `src/OptimisticForm.tsx` | Show the review instantly with `useOptimistic`. | The review appears as "sending…" before the server answers, and a rejected one ("Bad") disappears by itself. |
+## Step 2 · Fix them with React 19 Actions
 
-The comments at the top of each file describe the goal and give hints. `src/TrapForm.tsx` is the React 18 version to compare against.
+Rewrite `src/ReviewForm.tsx` so that:
+
+| Check | How you'll see it |
+|---|---|
+| A double click sends **one** request | One POST bar in the timeline, your review appears once |
+| The error **clears** on the next try | No stale error after a successful post |
+| The form **resets** after a success | The text box is empty again |
+| The text **stays** after an error | The user doesn't have to retype |
+| **No** `useState` for loading or error | React tracks them for you |
+
+Use `<form action>` with `useActionState` (from `react`), and `useFormStatus` (from `react-dom`) for the submit button.
+
+## Bonus
+
+Show the review **instantly**, before the server answers, with `useOptimistic`. A rejected review (try "Bad") must disappear by itself. Hint: the review list lives in `src/App.tsx`, and a review with `sending: true` is already shown greyed out as "sending…".
 
 ## Run it locally
 

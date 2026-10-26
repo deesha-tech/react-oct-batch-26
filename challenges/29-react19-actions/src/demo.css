@@ -33,5 +33,5 @@
 .pr-item.is-dupe .pr-who { color: #9b2c16; }
 @media (max-width: 760px) { .pr-grid { grid-template-columns: 1fr; } }
 @media (max-width: 640px) { .seg-key { display: none; } }
-.rf-todo { margin: 0; padding: .55rem .75rem; border-radius: 10px; background: #fff3dd; border: 1px dashed var(--saffron); font-size: .86rem; color: var(--navy); }
-.rf-todo code { font: 600 .82rem var(--font-mono); }
+.demo-title { font: 700 .95rem var(--font-display); color: var(--navy); }
+.demo-note code { font: 600 .82rem var(--font-mono); }
