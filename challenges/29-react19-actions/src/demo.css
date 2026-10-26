@@ -1,0 +1,37 @@
+/* Styles for this example. Brand chrome lives in shell/shell.css. */
+.demo-hint { margin: 0 0 .85rem; font-size: .88rem; color: var(--slate-strong); }
+.demo-note { margin: 0; padding: .7rem 1rem; font-size: .88rem; border-top: 1px solid var(--rule); background: #fbfaf7; }
+.pr-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.1rem; align-items: start; }
+
+/* The review form */
+.rf { display: grid; gap: .6rem; }
+.rf-stars { display: inline-flex; flex-direction: row-reverse; justify-content: flex-end; gap: .15rem; }
+.rf-stars input { position: absolute; opacity: 0; pointer-events: none; }
+.rf-stars label { cursor: pointer; font-size: 1.35rem; line-height: 1; color: #d9d2c3; }
+.rf-stars label:has(input:checked), .rf-stars label:has(input:checked) ~ label { color: var(--saffron); }
+.rf-text { min-height: 5.2rem; resize: vertical; font: 500 .92rem var(--font-sans); padding: .6rem .7rem; border: 1.5px solid var(--rule); border-radius: 10px; }
+.rf-text:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px color-mix(in oklab, var(--teal) 18%, transparent); }
+.rf-foot { display: grid; gap: .5rem; }
+.rf-submit { justify-self: start; }
+.rf-submit:disabled { opacity: .55; cursor: progress; }
+.rf-error { margin: 0; padding: .45rem .65rem; border-radius: 8px; background: #fde8e3; color: #9b2c16; font-size: .84rem; font-weight: 600; }
+
+/* The product and its reviews */
+.pr { border: 1px solid var(--rule); border-radius: 12px; background: var(--white); overflow: hidden; }
+.pr-head { display: flex; gap: .75rem; align-items: center; padding: .7rem .8rem; border-bottom: 1px solid var(--rule); background: var(--paper); }
+.pr-head img { border-radius: 10px; background: var(--white); object-fit: cover; }
+.pr-head div { display: grid; line-height: 1.3; }
+.pr-head .muted { font-size: .8rem; }
+.pr-list { list-style: none; margin: 0; padding: .3rem .8rem .6rem; display: grid; }
+.pr-item { display: grid; gap: .1rem; padding: .5rem 0; border-top: 1px solid var(--rule); font-size: .86rem; }
+.pr-item:first-child { border-top: 0; }
+.pr-stars { color: var(--saffron); letter-spacing: .05em; font-size: .8rem; }
+.pr-who { font-size: .74rem; color: var(--slate-strong); font-weight: 600; }
+.pr-item.is-sending { opacity: .55; }
+.pr-item.is-sending .pr-who { color: var(--teal-deep); }
+.pr-item.is-dupe { background: #fde8e3; margin: 0 -.8rem; padding-left: .8rem; padding-right: .8rem; }
+.pr-item.is-dupe .pr-who { color: #9b2c16; }
+@media (max-width: 760px) { .pr-grid { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .seg-key { display: none; } }
+.rf-todo { margin: 0; padding: .55rem .75rem; border-radius: 10px; background: #fff3dd; border: 1px dashed var(--saffron); font-size: .86rem; color: var(--navy); }
+.rf-todo code { font: 600 .82rem var(--font-mono); }
