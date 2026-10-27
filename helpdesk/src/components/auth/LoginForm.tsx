@@ -27,6 +27,7 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
   const [data, setData] = useState<LoginCredentials>(INITIAL_DATA)
   const [touched, setTouched] = useState<Touched>({})
   const [submitAttempted, setSubmitAttempted] = useState(false)
+  
   const formRef = useRef<HTMLFormElement>(null)
 
   // 1. WHAT is wrong — derived every render, never stored (a stored copy lags a keystroke).
